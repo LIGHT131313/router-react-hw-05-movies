@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { SharedLayout } from './SharedLayout';
+import { Layout } from './Layout';
 import { GlobalStyle } from './GlobalStyles';
 import { Toaster } from 'react-hot-toast';
 
@@ -13,9 +13,9 @@ const NotFoundPage = lazy(() => import('pages/NotFoundPage'));
 
 export const App = () => {
   return (
-    <>
+    <div>
       <Routes>
-        <Route path="/" element={<SharedLayout />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="movies" element={<MoviesPage />} />
           <Route path="movies/:movieId" element={<MovieDetailsPage />}>
@@ -27,6 +27,6 @@ export const App = () => {
       </Routes>
       <GlobalStyle />
       <Toaster position="top-right" />
-    </>
+    </div>
   );
 };
