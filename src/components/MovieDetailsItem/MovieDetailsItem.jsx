@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useRef } from 'react';
 import { useLocation, Link, Outlet } from 'react-router-dom';
 import { Loader } from 'components/Loader/Loader';
 
@@ -14,11 +14,11 @@ export const MovieDetailsItem = ({
   const year = release_date ? release_date.slice(0, 4) : release_date;
   const votePercentage = Math.round(vote_average * 10);
   const location = useLocation();
-  const backLinkHref = location.state?.from ?? '/';
+  const backLinkHref = useRef(location.state?.from ?? '/');
 
   return (
     <main>
-      <Link to={backLinkHref}>Go back</Link>
+      <Link to={backLinkHref.current}>Go back</Link>
       <img src={poster} alt="poster" width={250} />
       <div>
         <h2>

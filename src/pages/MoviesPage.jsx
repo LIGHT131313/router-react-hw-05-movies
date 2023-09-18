@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { Loader } from 'components/Loader/Loader';
 import { Searchbar } from 'components/Searchbar/Searchbar';
@@ -13,6 +13,7 @@ export default function MoviesPage() {
   const [loadMore, setLoadmore] = useState(false);
   const [loading, setLoading] = useState(false);
   const queryParam = query.get('query') ?? '';
+  const buttonRef = useRef();
 
   const handleSubmit = evt => {
     evt.preventDefault();
@@ -22,7 +23,6 @@ export default function MoviesPage() {
       toast.error('Please enter a non-empty search query');
     } else {
       setQuery({ query: value });
-      // setQuery(`${Date.now()}/${value}`);
       if (value !== query.get('query')) {
         setMovies([]);
         setPage(1);
@@ -34,6 +34,7 @@ export default function MoviesPage() {
   useEffect(() => {
     if (!queryParam) {
       setMovies([]);
+      setPage(1);
       return;
     }
     async function getMovies() {
@@ -63,7 +64,16 @@ export default function MoviesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, queryParam]);
 
-  const handleLoadMore = () => setPage(page + 1);
+  const handleLoadMore = () => {
+    scrollToButtonMore();
+    setPage(page + 1);
+  };
+
+  const scrollToButtonMore = () => {
+    setTimeout(() => {
+      buttonRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+  };
 
   return (
     <>
@@ -71,7 +81,9 @@ export default function MoviesPage() {
       {loading && <Loader />}
       {!loading && movies.length > 0 && <MoviesList movies={movies} />}
       {movies.length > 0 && loadMore && !loading && (
-        <button onClick={() => handleLoadMore()}>Load more</button>
+        <button ref={buttonRef} onClick={() => handleLoadMore()}>
+          Load more
+        </button>
       )}
     </>
   );
