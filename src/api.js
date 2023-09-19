@@ -8,27 +8,37 @@ const params = new URLSearchParams({
   language: 'en-US',
 });
 
-export const fetchTrendingMovies = async () => {
-  const resp = await axios(`/trending/all/day?${params}`);
+export const fetchTrendingMovies = async option => {
+  const resp = await axios(`/trending/all/day?${params}`, {
+    signal: option,
+  });
   return resp.data.results;
 };
 
-export const fetchMovieById = async id => {
-  const resp = await axios(`/movie/${id}?${params}`);
+export const fetchMovieById = async (id, option) => {
+  const resp = await axios(`/movie/${id}?${params}`, {
+    signal: option,
+  });
   return resp.data;
 };
 
-export const fetchCastMovieById = async id => {
-  const resp = await axios(`/movie/${id}/credits?${params}`);
+export const fetchCastMovieById = async (id, option) => {
+  const resp = await axios(`/movie/${id}/credits?${params}`, {
+    signal: option,
+  });
   return resp.data.cast;
 };
 
-export const fetchReviewsMovieById = async id => {
-  const resp = await axios(`/movie/${id}/reviews?${params}`);
+export const fetchReviewsMovieById = async (id, option) => {
+  const resp = await axios(`/movie/${id}/reviews?${params}`, {
+    signal: option,
+  });
   return resp.data.results;
 };
 
-export const fetchMoviesByQuery = async (query, page) => {
-  const resp = await axios(`/search/movie?query=${query}&page=${page}`);
+export const fetchMoviesByQuery = async (query, page, option) => {
+  const resp = await axios(`/search/movie?query=${query}&page=${page}`, {
+    signal: option,
+  });
   return resp.data;
 };

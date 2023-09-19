@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 export const MoviesList = ({ movies }) => {
   const location = useLocation();
+  const yearInQueryList = location.pathname === '/movies';
 
   return (
     <>
@@ -10,7 +11,7 @@ export const MoviesList = ({ movies }) => {
           <li key={id}>
             <Link to={`/movies/${id}`} state={{ from: location }}>
               {title}
-              {location.pathname === '/movies' ? (
+              {yearInQueryList ? (
                 <span> ({release_date.slice(0, 4) || '?'})</span>
               ) : (
                 <></>

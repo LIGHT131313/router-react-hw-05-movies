@@ -9,19 +9,26 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function getMovies() {
       try {
         setLoading(true);
-        const trendingMovies = await fetchTrendingMovies();
+        const trendingMovies = await fetchTrendingMovies(controller.signal);
         setMovies(trendingMovies);
       } catch (error) {
-        toast.error('Something went wrong, please try again!');
+        if (error.code !== 'ERR_CANCELED') {
+          toast.error('Something went wrong, please try again!');
+        }
       } finally {
         setLoading(false);
       }
     }
-
     getMovies();
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   return (

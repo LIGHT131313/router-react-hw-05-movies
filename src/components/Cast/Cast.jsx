@@ -12,19 +12,29 @@ export default function Cast() {
 
   useEffect(() => {
     if (!movieId) return;
+    const controller = new AbortController();
+
     async function fetchCast() {
       try {
         setLoading(true);
-        const fetchedCast = await fetchCastMovieById(movieId);
+        const fetchedCast = await fetchCastMovieById(
+          movieId,
+          controller.signal
+        );
         setCast(fetchedCast);
       } catch (error) {
-        toast.error('Something went wrong, please try again!');
+        if (error.code !== 'ERR_CANCELED') {
+          toast.error('Something went wrong, please try again!');
+        }
       } finally {
         setLoading(false);
       }
     }
-
     fetchCast();
+
+    return () => {
+      controller.abort();
+    };
   }, [movieId]);
 
   return (

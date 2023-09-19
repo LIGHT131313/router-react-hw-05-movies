@@ -12,19 +12,29 @@ export default function Reviews() {
 
   useEffect(() => {
     if (!movieId) return;
+    const controller = new AbortController();
+
     async function fetchReviews() {
       try {
         setLoading(true);
-        const fetchedReviews = await fetchReviewsMovieById(movieId);
+        const fetchedReviews = await fetchReviewsMovieById(
+          movieId,
+          controller.signal
+        );
         setReviews(fetchedReviews);
       } catch (error) {
-        toast.error('Something went wrong, please try again!');
+        if (error.code !== 'ERR_CANCELED') {
+          toast.error('Something went wrong, please try again!');
+        }
       } finally {
         setLoading(false);
       }
     }
-
     fetchReviews();
+
+    return () => {
+      controller.abort();
+    };
   }, [movieId]);
 
   return (

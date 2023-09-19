@@ -37,13 +37,16 @@ export default function MoviesPage() {
       setPage(1);
       return;
     }
+    const controller = new AbortController();
+
     async function getMovies() {
       try {
         setLoading(true);
         const newQuery = query.get('query');
         const { results, total_pages } = await fetchMoviesByQuery(
           newQuery,
-          page
+          page,
+          controller.signal
         );
         if (!results.length) {
           toast.error(
@@ -54,13 +57,18 @@ export default function MoviesPage() {
           setLoadmore(page < total_pages);
         }
       } catch (error) {
-        toast.error('Something went wrong, please try again!');
+        if (error.code !== 'ERR_CANCELED') {
+          toast.error('Something went wrong, please try again!');
+        }
       } finally {
         setLoading(false);
       }
     }
-
     getMovies();
+
+    return () => {
+      controller.abort();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, queryParam]);
 
@@ -80,7 +88,7 @@ export default function MoviesPage() {
       <Searchbar onSubmit={handleSubmit} />
       {loading && <Loader />}
       {!loading && movies.length > 0 && <MoviesList movies={movies} />}
-      {movies.length > 0 && loadMore && !loading && (
+      {!loading && movies.length > 0 && loadMore && (
         <button ref={buttonRef} onClick={() => handleLoadMore()}>
           Load more
         </button>

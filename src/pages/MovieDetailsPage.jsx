@@ -13,21 +13,28 @@ export default function MovieDetailsPage() {
 
   useEffect(() => {
     if (!movieId) return;
+    const controller = new AbortController();
+
     async function fetchMovie() {
       try {
         setError(false);
         setLoading(true);
-        const fetchedMovie = await fetchMovieById(movieId);
+        const fetchedMovie = await fetchMovieById(movieId, controller.signal);
         setMovie(fetchedMovie);
       } catch (error) {
-        setError(true);
-        toast.error('Something went wrong, please try again!');
+        if (error.code !== 'ERR_CANCELED') {
+          setError(true);
+          toast.error('Something went wrong, please try again!');
+        }
       } finally {
         setLoading(false);
       }
     }
-
     fetchMovie();
+
+    return () => {
+      controller.abort();
+    };
   }, [movieId]);
   return (
     <>
